@@ -1,8 +1,8 @@
 # Findings
 
-Business question: where is e-commerce revenue being lost, which customer segments represent the largest opportunity to increase repeat revenue, and what should the business prioritise?
+Business question: where is e-commerce revenue being lost, which customer segments represent the largest opportunity to increase repeat revenue, and what should the business prioritize?
 
-Every figure below is an observed result from the query outputs in `analysis/outputs` unless it is labelled as an estimate. Data covers orders from 2019-01-11 to 2026-09-30. "Trailing 12 months" is 2025-10-01 to 2026-09-30. Metric definitions are in `kpi_dictionary.md`; data caveats are in `data_quality.md`.
+Every figure below is an observed result from the query outputs in `analysis/outputs` unless it is labeled as an estimate. Data covers orders from 2019-01-11 to 2026-09-30. "Trailing 12 months" is 2025-10-01 to 2026-09-30. Metric definitions are in `kpi_dictionary.md`; data caveats are in `data_quality.md`.
 
 ## 1. Headline numbers
 
@@ -57,7 +57,7 @@ All-time, 250,373 sessions leave before adding to cart and 249,627 add to cart w
 Three properties of the event data limit what the funnel can say:
 
 - Conversion does not vary by segment. In the trailing 12 months, overall conversion ranges from 52.7% to 54.7% across browsers, 52.8% to 53.3% across traffic sources, and 51.8% to 54.4% across product categories. There is no weak channel or category to fix.
-- The difference between all-time and recent conversion is a mix effect. Sessions without a user never purchase and number about 64,000 to 65,000 every year; sessions with a user always purchase and grow with order volume. Blended conversion therefore rises from 2.2% in 2019 to 55.3% in 2026 without any change in behaviour.
+- The difference between all-time and recent conversion is a mix effect. Sessions without a user never purchase and number about 64,000 to 65,000 every year; sessions with a user always purchase and grow with order volume. Blended conversion therefore rises from 2.2% in 2019 to 55.3% in 2026 without any change in behavior.
 - A purchase session corresponds to one order item, so these rates are session rates and do not reconcile to order counts.
 
 ![Conversion by segment](../images/09_funnel_conversion_by_segment.png)
@@ -70,7 +70,7 @@ Source: `04_customer_purchase_groups.csv`
 
 Of 100,000 registered users, 19,966 have never placed an order and a further 14,065 have placed only orders that were cancelled or returned. That leaves 34,031 users (34.0%) who have generated no revenue.
 
-## 3. Customer value and repeat behaviour
+## 3. Customer value and repeat behavior
 
 ### Most customers buy once
 
@@ -165,27 +165,27 @@ Revenue is spread across 26 categories; the top five account for 43.2% of revenu
 
 Source: `mart_reorder_backtest`, `19_reorder_backtest.csv`, `20_reorder_backtest_recency_by_spend.csv`
 
-RFM describes past value. To see what predicts a future order, customers were described as they stood on 2025-09-30 (365 days before the end of the data) and followed for the next 365 days. Of 42,460 customers with a valid order by that date, 16.3% ordered again in the window, at an average order value of $86.05.
+RFM describes past value. To see what predicts a future order, customers were described as they stood on a snapshot date and followed for the next 365 days. The figures in this section use a snapshot of 2025-08-31 and an outcome window ending 2026-08-31, which leaves out the September 2026 spike in orders; section 7 compares this with the window that includes it. Of 41,192 customers with a valid order by the snapshot date, 16.2% ordered again in the window, at an average order value of $86.35.
 
 | Customer attribute at snapshot | Customers | 12-month reorder rate | Value of next orders |
 |---|---|---|---|
-| Last order 0-90 days before | 5,468 | 24.2% | $86.30 |
-| 91-180 days | 4,558 | 21.8% | $82.67 |
-| 181-365 days | 7,541 | 18.5% | $88.07 |
-| 366-730 days | 10,119 | 15.3% | $83.88 |
-| Over 730 days | 14,774 | 11.4% | $88.36 |
-| 1 prior order | 32,430 | 15.2% | $85.78 |
-| 2+ prior orders | 10,030 | 19.9% | $86.76 |
-| Top 40% by prior spend | 16,984 | 17.1% | $87.24 |
-| Bottom 60% by prior spend | 25,476 | 15.8% | $85.21 |
+| Last order 0-90 days before | 5,240 | 23.1% | $85.39 |
+| 91-180 days | 4,470 | 21.7% | $83.18 |
+| 181-365 days | 7,385 | 18.4% | $87.83 |
+| 366-730 days | 9,830 | 15.2% | $85.44 |
+| Over 730 days | 14,267 | 11.4% | $88.78 |
+| 1 prior order | 31,643 | 15.1% | $86.34 |
+| 2+ prior orders | 9,549 | 19.7% | $86.37 |
+| Top 40% by prior spend | 16,476 | 16.8% | $86.32 |
+| Bottom 60% by prior spend | 24,716 | 15.7% | $86.37 |
 
 ![Reorder rate by recency and prior spend](../images/11_reorder_rate_by_recency_and_spend.png)
 
-- **Recency is the strongest predictor.** The reorder rate halves from 24.2% for customers who bought in the last 90 days to 11.4% for those inactive for over two years.
-- **A second order raises the chance of a third.** Customers with two or more prior orders reorder at 19.9% against 15.2% for one-order customers.
-- **Past spend predicts almost nothing.** Within each recency band the top 40% and bottom 60% of spenders reorder at rates within about one point of each other, and their next orders are worth about the same ($87.24 against $85.21) even though their prior spend differs by a factor of four ($211 to $222 against about $54). High historical spend in this data comes from having bought an expensive item once, not from a tendency to spend more.
+- **Recency is the strongest predictor.** The reorder rate halves from 23.1% for customers who bought in the last 90 days to 11.4% for those inactive for over two years.
+- **A second order raises the chance of a third.** Customers with two or more prior orders reorder at 19.7% against 15.1% for one-order customers.
+- **Past spend predicts almost nothing.** Within each recency band the top 40% and bottom 60% of spenders reorder at rates within about 1.3 points of each other, and in one band the lower spenders reorder more. Their next orders are worth the same ($86.32 against $86.37) even though their prior spend differs by more than a factor of four (about $202 to $220 against about $45). High historical spend in this data comes from having bought an expensive item once, not from a tendency to spend more.
 
-This changes the reading of the RFM table. High-Value At Risk customers hold 24.9% of historical revenue, but customers like them (inactive over 730 days, top spend tier) reorder at 12.0% with a next-order value of $89.96, barely different from other long-inactive customers (11.0%, $87.41). Their past value does not carry forward, so they are not a better reactivation target than anyone else who has been inactive as long.
+This changes the reading of the RFM table. High-Value At Risk customers hold 24.9% of historical revenue, but customers like them (inactive over 730 days, top spend tier) reorder at 11.9% with a next-order value of $90.64, barely different from other long-inactive customers (11.1%, $87.69). Their past value does not carry forward, so they are not a better reactivation target than anyone else who has been inactive as long.
 
 The larger opportunity is the 46,097 one-time buyers. They are 69.9% of customers, a second order raises both lifetime value and the chance of a third, and the ones most likely to respond are the 18,636 whose single order was in the last 365 days.
 
@@ -193,7 +193,7 @@ The larger opportunity is the 46,097 one-time buyers. They are 69.9% of customer
 
 Source: `mart_opportunity_scenarios`, `21_opportunity_scenarios.csv`, `22_opportunity_by_recency_band.csv`. Assumptions are in `dbt_project/seeds/scenario_assumptions.csv`.
 
-Everything in this section is an **estimate** built on stated assumptions. None of it is revenue that has been generated.
+Everything in this section is an **estimate** built on stated assumptions. None of it is revenue that has been generated. The baseline comes from the backtest window ending 2026-08-31.
 
 **Model.** For each recency band:
 
@@ -202,16 +202,16 @@ Everything in this section is an **estimate** built on stated assumptions. None 
 | Input | Value | Type |
 |---|---|---|
 | Eligible customers | 46,097 customers with exactly one valid order | Observed |
-| Baseline 12-month reorder rate | 10.7% to 23.6% by recency band (15.6% weighted) | Observed in the backtest for one-order customers |
-| Expected order value | $85.78 | Observed in the backtest for one-order customers |
+| Baseline 12-month reorder rate | 10.8% to 22.4% by recency band (15.4% weighted) | Observed in the backtest for one-order customers |
+| Expected order value | $86.34 | Observed in the backtest for one-order customers |
 | Relative lift in reorder rate | 5%, 10%, 20% | Assumption |
 | Incremental orders per reactivated customer | 1 | Assumption |
 
 | Scenario | Assumed relative lift | Estimated additional customers reordering | Estimated incremental revenue, 12 months | Of which from buyers active in the last 365 days |
 |---|---|---|---|---|
-| Conservative | 5% | 360 | $30,840 | $16,747 |
-| Base | 10% | 719 | $61,681 | $33,494 |
-| Optimistic | 20% | 1,438 | $123,361 | $66,988 |
+| Conservative | 5% | 355 | $30,622 | $16,401 |
+| Base | 10% | 709 | $61,245 | $32,801 |
+| Optimistic | 20% | 1,419 | $122,489 | $65,603 |
 
 ![Opportunity scenarios](../images/12_opportunity_scenarios.png)
 
@@ -221,15 +221,54 @@ Base scenario by recency band:
 
 | Days since only order | Eligible customers | Baseline reorder rate | Estimated incremental revenue |
 |---|---|---|---|
-| 0-90 | 7,379 | 23.6% | $14,954 |
-| 91-180 | 4,363 | 21.2% | $7,922 |
-| 181-365 | 6,894 | 18.0% | $10,617 |
-| 366-730 | 9,627 | 14.3% | $11,788 |
-| Over 730 | 17,834 | 10.7% | $16,399 |
+| 0-90 | 7,379 | 22.4% | $14,247 |
+| 91-180 | 4,363 | 21.1% | $7,955 |
+| 181-365 | 6,894 | 17.8% | $10,600 |
+| 366-730 | 9,627 | 14.3% | $11,888 |
+| Over 730 | 17,834 | 10.8% | $16,555 |
 
 **For comparison.** One percentage point of trailing-12-month gross order value is $43,918. Reducing cancellations from 15.1% to 14.1% of gross order value would therefore be worth about as much as the base repeat-purchase scenario. This is a sensitivity, not a forecast: the data gives no indication of what would reduce cancellations.
 
-## 7. Validation
+## 7. Sensitivity to the September 2026 spike
+
+Source: `25_final_month_sensitivity.csv`, `19_reorder_backtest.csv`
+
+**The anomaly.** September 2026 has 9,956 orders placed against 5,621 in August, and its 7,466 valid orders are about a fifth of the trailing-12-month total. This is a property of the synthetic data. A backtest whose outcome window ends on 2026-09-30 counts those orders as reorders, which could inflate the baseline reorder rate and therefore the opportunity estimates.
+
+**The original analysis** used a snapshot of 2025-09-30 and an outcome window ending 2026-09-30.
+
+**The sensitivity test** moves both dates back one month: snapshot 2025-08-31, outcome window ending 2026-08-31. The window is still 365 days, so the two are comparable, and September 2026 is excluded entirely. Both versions are produced by `mart_reorder_backtest` and carried through `mart_opportunity_scenarios`.
+
+| | Original (ends 2026-09-30) | Adjusted (ends 2026-08-31) |
+|---|---|---|
+| Customers at snapshot | 42,460 | 41,192 |
+| Reorder rate, all customers | 16.3% | 16.2% |
+| Reorder rate, one-order customers | 15.2% | 15.1% |
+| Reorder rate, last order 0-90 days before | 24.2% | 23.1% |
+| Reorder rate, last order over 730 days before | 11.4% | 11.4% |
+| Reorder rate, top 40% by prior spend | 17.1% | 16.8% |
+| Reorder rate, bottom 60% by prior spend | 15.8% | 15.7% |
+| Next-order value, top 40% by prior spend | $87.24 | $86.32 |
+| Next-order value, bottom 60% by prior spend | $85.21 | $86.37 |
+| Baseline for eligible one-time buyers (weighted) | 15.6% | 15.4% |
+| Expected order value | $85.78 | $86.34 |
+| Conservative estimate | $30,840 | $30,622 |
+| Base estimate | $61,681 | $61,245 |
+| Optimistic estimate | $123,361 | $122,489 |
+
+![Final-month sensitivity](../images/13_final_month_sensitivity.png)
+
+**Result.** The spike has a small effect. It raises the reorder rate of the most recently active customers by about one point (24.2% against 23.1%) and leaves the other recency bands within 0.1 points. The weighted baseline for one-time buyers moves from 15.6% to 15.4%, and the estimates fall by 0.7%.
+
+**Recency relationship.** Unchanged. The rate still falls steadily across the five bands, from 23.1% to 11.4%.
+
+**Spend-tier relationship.** Unchanged, and slightly weaker. The gap between spend tiers is 1.1 points in the adjusted window against 1.3 in the original, and the difference in next-order value disappears ($86.32 against $86.37).
+
+**Does the recommendation change?** No. Recent one-time buyers remain the best-supported target in both windows. The adjusted window is used for the headline figures because it does not depend on the anomalous month.
+
+**What this test does not address.** Order volume rises steeply throughout the final year, not only in September (monthly orders placed roughly double between February and August 2026). Removing one month does not remove that trend, so the baseline may still be above what a steady-state business would show.
+
+## 8. Validation
 
 Source: `23_validation_checks.csv`, dbt tests
 

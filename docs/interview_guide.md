@@ -4,21 +4,21 @@ A walkthrough of the project and the questions it is likely to raise. Answers re
 
 ## The project in one pass
 
-**Problem.** Where is revenue being lost, which customer segments offer the largest opportunity to increase repeat revenue, and what should be prioritised?
+**Problem.** Where is revenue being lost, which customer segments offer the largest opportunity to increase repeat revenue, and what should be prioritized?
 
 **Data.** Google's public TheLook eCommerce dataset in BigQuery: 100,000 users, 124,814 orders, 180,771 order items, 29,120 products and 2.4 million web events, January 2019 to September 2026. It is synthetic and regenerated daily; the analysis uses the snapshot of 2026-09-30.
 
-**Modeling.** A dbt project with three layers. Staging has one model per source table. Intermediate holds shared logic: the revenue rule applied to order items, order value, and session funnel flags. Marts hold three facts (orders, order items, sessions), two dimensions (customers, products) and eight reporting marts. 21 models, one seed, 83 data tests.
+**Modeling.** A dbt project with three layers. Staging has one model per source table. Intermediate holds shared logic: the revenue rule applied to order items, order value, and session funnel flags. Marts hold three facts (orders, order items, sessions), two dimensions (customers, products) and eight reporting marts. 21 models, one seed, 96 data tests.
 
-**Analysis.** 24 SQL queries against the marts covering KPIs, revenue leakage, cohorts, RFM, concentration, the funnel, categories, a reorder backtest and scenarios. Each writes a CSV; figures are drawn from those CSVs.
+**Analysis.** 25 SQL queries against the marts covering KPIs, revenue leakage, cohorts, RFM, concentration, the funnel, categories, a reorder backtest, scenarios and a sensitivity test. Each writes a CSV; figures are drawn from those CSVs, and a four-page Streamlit dashboard reads the mart exports.
 
-**Finding.** A quarter of gross order value is cancelled or returned, uniformly. 69.9% of customers buy once, and the 30.1% who return generate 50.4% of revenue. Recency predicts a reorder (24.2% falling to 11.4%); past spend does not.
+**Finding.** A quarter of gross order value is cancelled or returned, uniformly. 69.9% of customers buy once, and the 30.1% who return generate 50.4% of revenue. Recency predicts a reorder (23.1% falling to 11.4%); past spend does not.
 
-**Recommendation.** A second-purchase programme for one-time buyers, selected by recency, tested with a control group. Separately, start capturing cancellation and return reasons.
+**Recommendation.** A second-purchase program for one-time buyers, selected by recency, tested with a control group. Separately, start capturing cancellation and return reasons.
 
-**Estimated opportunity.** $30,840, $61,681 and $123,361 over 12 months for 5%, 10% and 20% relative lifts in the reorder rate of 46,097 one-time buyers. These are estimates on an assumed lift.
+**Estimated opportunity.** $30,622, $61,245 and $122,489 over 12 months for 5%, 10% and 20% relative lifts in the reorder rate of 46,097 one-time buyers. These are estimates on an assumed lift. The baseline excludes September 2026, whose order volume is anomalous; including it gives $30,840, $61,681 and $123,361.
 
-**Limitations.** Synthetic data with uniform behaviour, order volume concentrated near the end date, an assumed lift, no cost or reason data, and a funnel that cannot be tied to orders.
+**Limitations.** Synthetic data with uniform behavior, order volume concentrated near the end date, an assumed lift, no cost or reason data, and a funnel that cannot be tied to orders.
 
 ## Questions and answers
 
@@ -27,7 +27,7 @@ A walkthrough of the project and the questions it is likely to raise. Answers re
 **Why three layers?**
 Staging isolates the source: renames, type-safe parsing, dropping personal fields. If the source changes, only staging changes. Intermediate holds logic used by more than one mart, so it is written once; the revenue rule is applied in `int_order_items_enriched` and nowhere else. Marts are what analysts and BI tools query.
 
-**Why is staging materialised as tables rather than views?**
+**Why is staging materialized as tables rather than views?**
 Two reasons specific to this source. TheLook is regenerated daily, so views would let different models read different versions of the data within one analysis. And the events table is the only large one; a table means it is scanned once per build rather than by every downstream query.
 
 **How is the revenue definition kept consistent?**
@@ -45,7 +45,7 @@ The one-product-per-session test encodes a property found during profiling. If a
 ### BigQuery
 
 **How did you control cost?**
-Staging selects only the columns used; from events that leaves out IP address, city, state and postal code. Everything downstream reads the materialised staging tables. Both the dbt profile and the Python client set `maximum_bytes_billed` to 5 GB per query. The whole project runs in the free sandbox.
+Staging selects only the columns used; from events that leaves out IP address, city, state and postal code. Everything downstream reads the materialized staging tables. Both the dbt profile and the Python client set `maximum_bytes_billed` to 5 GB per query. The whole project runs in the free sandbox.
 
 **How do the analysis queries find the tables?**
 The runner sets a default dataset on the query job, so the SQL files use unqualified names like `fct_orders` and stay portable across projects.
@@ -84,7 +84,7 @@ Quintiles adapt to the actual distribution and give equal-sized groups. A tie-br
 ### Data quality
 
 **What did profiling find?**
-Keys and relationships are clean. The material findings were behavioural: item timestamps drift from order timestamps; purchase sessions map to order items; identified sessions always purchase and anonymous ones never do; anonymous traffic is constant over time while orders grow; and order volume is concentrated in the final months. Each one changed a modeling or interpretation decision. They are listed in `analysis/data_quality.md`.
+Keys and relationships are clean. The material findings were behavioral: item timestamps drift from order timestamps; purchase sessions map to order items; identified sessions always purchase and anonymous ones never do; anonymous traffic is constant over time while orders grow; and order volume is concentrated in the final months. Each one changed a modeling or interpretation decision. They are listed in `analysis/data_quality.md`.
 
 **How did you handle the events dated after the last order?**
 1,843 purchase sessions belong to items stamped after the latest order. Dropping only the late events would have left those sessions looking like abandoned carts, so the whole sessions are excluded in `int_session_funnel`.
@@ -159,31 +159,48 @@ Customers ranked by lifetime revenue with `row_number()`, with the top N% define
 ### Scenario analysis
 
 **How was the opportunity chosen?**
-By testing the obvious candidate first. The reorder backtest took customers as they stood 365 days before the end of the data and followed them for a year. Recency predicted reordering; past spend did not. One-time buyers are 70% of customers, and a second order raises the chance of a third from 15.2% to 19.9%, so they are the larger and better-supported target.
+By testing the obvious candidate first. The reorder backtest took customers as they stood at a snapshot date (2025-08-31) and followed them for a year. Recency predicted reordering; past spend did not. One-time buyers are 70% of customers, and a second order raises the chance of a third from 15.1% to 19.7%, so they are the larger and better-supported target.
 
 **What is observed and what is assumed?**
-Observed: 46,097 eligible customers, a baseline reorder rate by recency band, and an expected order value of $85.78. Assumed: the relative lift (5%, 10%, 20%) and one extra order per reactivated customer.
+Observed: 46,097 eligible customers, a baseline reorder rate by recency band, and an expected order value of $86.34. Assumed: the relative lift (5%, 10%, 20%) and one extra order per reactivated customer.
 
 **Why a relative lift rather than percentage points?**
 It keeps the estimate proportional to each band's baseline, so recently active customers, who are more likely to respond, contribute more. It also avoids implying that a long-lapsed group could gain the same absolute uplift as a recent one.
 
 **Why is the estimate small?**
-The base case is 1.9% of trailing-12-month revenue. A 10% relative lift on a 15.6% baseline is about 1.6 points across 46,097 customers at $86 an order. The analysis does not inflate it. It also shows that one point of cancellations is worth about $43,900, a similar size.
+The base case is 1.9% of trailing-12-month revenue. A 10% relative lift on a 15.4% baseline is about 1.5 points across 46,097 customers at $86 an order. The analysis does not inflate it. It also shows that one point of cancellations is worth about $43,900, a similar size.
 
 **What would make the estimate wrong?**
-The lift is unvalidated. The baseline is probably overstated by the late concentration of orders. Costs and discounts are excluded. Follow-on orders are excluded, which works in the other direction.
+The lift is unvalidated. The baseline may still be above a steady-state level, because order volume rises steeply through the whole final year and not only in September. Costs and discounts are excluded. Follow-on orders are excluded, which works in the other direction.
+
+**What did you do about the September 2026 spike?**
+September has 9,956 orders against 5,621 in August, so a backtest ending on 2026-09-30 could count an anomalous month as reorders. The backtest mart produces two windows: the original, and one shifted back a month to end on 2026-08-31, still 365 days long. The baseline for one-time buyers moves from 15.6% to 15.4% and the estimates fall by 0.7%. The recency gradient and the absence of a spend effect are the same in both. The adjusted window is the one reported, and the original is kept in the mart and the findings for comparison.
 
 **How would you validate it?**
-A randomised holdout: withhold the programme from a control group of eligible one-time buyers and compare 12-month reorder rates.
+A randomized holdout: withhold the program from a control group of eligible one-time buyers and compare 12-month reorder rates.
+
+### Dashboard
+
+**How is the dashboard built?**
+A Streamlit app with four pages (Executive Overview, Customer & Retention, Funnel & Product Performance, Revenue Opportunity) using Plotly charts. It reads the mart CSVs in `data/marts`, so it runs without a database connection.
+
+**Where does the business logic live?**
+In dbt. The app filters and aggregates prepared columns such as `net_revenue`, `is_valid_order` and the funnel stage counts. It does not redefine revenue, re-derive funnel stages or rescore RFM. The lift sliders on the opportunity page rescale the estimates that `mart_opportunity_scenarios` already computed.
+
+**How does the repeat purchase rate respond to the date filter?**
+It is the share of customers with a valid order in the selected period who had placed two or more valid orders by their latest order in it. With no filter this equals the lifetime figure of 30.1%.
+
+**Why does the funnel page default to the last 12 months?**
+All-time conversion is dominated by the mix of anonymous and identified sessions. A recent window is closer to a like-for-like view, and the caption explains the mix effect.
 
 ### Visualization choices
 
 | Figure | Chart type | Why |
 |---|---|---|
 | Monthly revenue, new vs returning | Stacked bar over time | Shows total and composition together; two categories stack cleanly |
-| Gross order value by status | Horizontal bar, sorted | Five categories compared on one measure; colour separates kept from lost |
+| Gross order value by status | Horizontal bar, sorted | Five categories compared on one measure; color separates kept from lost |
 | Orders per customer | Grouped bar | Puts share of customers next to share of revenue for each order count |
-| Cohort retention | Heatmap | The standard way to read a cohort by period matrix; month 0 is excluded so colour is not dominated by 100% |
+| Cohort retention | Heatmap | The standard way to read a cohort by period matrix; month 0 is excluded so color is not dominated by 100% |
 | Second-order rate by cohort | Line | A trend across ordered cohorts for three windows |
 | RFM segments | Grouped horizontal bar | Long segment names; compares headcount share with revenue share |
 | Revenue concentration | Cumulative curve with a diagonal | Shows the whole distribution and distance from equal spend, with the top-N points marked |
@@ -191,7 +208,8 @@ A randomised holdout: withhold the programme from a control group of eligible on
 | Conversion by segment | Bar | The point is that the bars are the same height |
 | Category revenue vs units | Scatter with a diagonal | Two shares per category; distance from the line shows price effect |
 | Reorder rate by recency and spend | Grouped bar | Shows the slope across recency and the lack of a gap between spend tiers |
-| Opportunity scenarios | Bar | Three scenario values, labelled with the assumption |
+| Opportunity scenarios | Bar | Three scenario values, labeled with the assumption |
+| Final-month sensitivity | Grouped bar | Original and adjusted reorder rates side by side for each recency band |
 
 Each title states the takeaway and takes its numbers from the data at run time, so titles cannot drift from the figures.
 

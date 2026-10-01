@@ -12,7 +12,7 @@ Source: `bigquery-public-data.thelook_ecommerce`, profiled on 2026-09-30. Querie
 | products | 29,120 | `id` | not dated |
 | events | 2,419,854 | `id`; also (`session_id`, `sequence_number`) | 2019-01-02 to 2026-10-04 |
 
-`inventory_items` and `distribution_centers` were inspected but are not needed for the business question and are not modelled.
+`inventory_items` and `distribution_centers` were inspected but are not needed for the business question and are not modeled.
 
 Relationships: `orders.user_id` to `users.id`, `order_items.order_id` to `orders.order_id`, `order_items.product_id` to `products.id`, `events.user_id` to `users.id` (nullable).
 
@@ -39,7 +39,7 @@ Relationships: `orders.user_id` to `users.id`, `order_items.order_id` to `orders
 
 **6. Anonymous traffic is flat while purchases grow.** Anonymous sessions number about 64,000 to 65,000 in every full year, while purchasing sessions grow from 1,444 in 2019 to 59,282 in 2026. Blended conversion therefore rises from 2.2% to 55.3% purely through this mix. The trend is a property of how the data is generated and is not interpreted as an improvement.
 
-**7. Order volume is concentrated near the present.** Users sign up at an even rate of about 12,500 a year, but orders grow from 1,013 in 2019 to 42,028 in the first nine months of 2026, and September 2026 alone has 9,956 orders against 5,621 in August. The median gap between signup and an order is 502 days. Metrics measured over recent windows, including recent-cohort retention and the reorder backtest, are raised by this.
+**7. Order volume is concentrated near the present.** Users sign up at an even rate of about 12,500 a year, but orders grow from 1,013 in 2019 to 42,028 in the first nine months of 2026, and September 2026 alone has 9,956 orders against 5,621 in August. The median gap between signup and an order is 502 days. Metrics measured over recent windows, including recent-cohort retention and the reorder backtest, are raised by this. The reorder backtest was therefore run with and without September 2026 in its outcome window; the effect on the baseline is small (15.6% against 15.4%) and the version without it is used. See section 7 of `findings.md`.
 
 **8. Session traffic source and user acquisition source are different fields.** `events.traffic_source` takes the values Email, Adwords, YouTube, Facebook and Organic; `users.traffic_source` takes Search, Organic, Facebook, Email and Display. They agree for only 6,342 of 180,771 identified sessions. They are kept as separate dimensions (`traffic_source` on sessions, `acquisition_source` on customers).
 

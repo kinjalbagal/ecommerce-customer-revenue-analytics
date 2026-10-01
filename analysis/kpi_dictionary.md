@@ -1,6 +1,6 @@
 # KPI Dictionary
 
-All metrics are calculated from the dbt marts in `dbt_project/models/marts`. The same definitions are used in the dbt models, the queries in `sql/analysis`, the figures and the Tableau specification.
+All metrics are calculated from the dbt marts in `dbt_project/models/marts`. The same definitions are used in the dbt models, the queries in `sql/analysis`, the figures and the dashboard.
 
 ## Rules that apply to every metric
 
@@ -36,7 +36,7 @@ All metrics are calculated from the dbt marts in `dbt_project/models/marts`. The
 | Product / Category Revenue | Revenue from items in a product or category | `sum(net_revenue)` grouped by product or category in `fct_order_items` | Order item | |
 | Cancellation Rate | Share of ordered units (or gross value) that was cancelled | `units_cancelled / units_ordered`; value version `cancelled_value / gross_order_value` | Order item / order | |
 | Return Rate | Share of ordered units (or gross value) that was returned | `units_returned / units_ordered`; value version `returned_value / gross_order_value` | Order item / order | Denominator is all units ordered, not units delivered |
-| 12-month Reorder Rate | Share of existing customers placing a valid order in the following 365 days | `customers_who_reordered / customers` in `mart_reorder_backtest` | Customer at snapshot date | Snapshot date is 365 days before the as-of date |
+| 12-month Reorder Rate | Share of existing customers placing a valid order in the following 365 days | `customers_who_reordered / customers` in `mart_reorder_backtest` | Customer at snapshot date | Reported for the outcome window ending 2026-08-31 (snapshot 2025-08-31), which excludes the final-month spike in orders. The window ending 2026-09-30 is kept for comparison |
 
 ## RFM scoring
 
