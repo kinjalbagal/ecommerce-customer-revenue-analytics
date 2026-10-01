@@ -12,14 +12,59 @@ models:
         description: sale_price for items in revenue-counting orders, otherwise 0.
 
   - name: int_orders_valued
-    description: Order-level totals rolled up from items. Grain is one row per order.
+    description: >
+      Order-level totals rolled up from items. Grain is one row per order. Upstream: stg_orders,
+      int_order_items_enriched.
     columns:
       - name: order_id
+        description: Primary key.
         data_tests: [unique, not_null]
+      - name: user_id
+        description: Customer who placed the order.
+        data_tests: [not_null]
+      - name: status
+        description: Order status from the source.
+      - name: ordered_at
+        description: Order creation timestamp.
+      - name: is_valid_order
+        description: True when the status counts toward revenue (Complete, Shipped or Processing).
+        data_tests: [not_null]
+      - name: item_count
+        description: Number of item rows in the order. Each row is one unit.
+      - name: gross_order_value
+        description: Sum of item sale prices regardless of status.
+      - name: net_revenue
+        description: Sum of item sale prices when the order is valid, otherwise 0.
+      - name: gross_margin
+        description: Net revenue less product cost when the order is valid, otherwise 0.
 
   - name: int_session_funnel
     description: >
       Session-level funnel flags derived from ordered events. Grain is one row per session.
+      Sessions that run past the latest order timestamp are excluded. Upstream: stg_events, stg_orders.
     columns:
       - name: session_id
+        description: Primary key.
         data_tests: [unique, not_null]
+      - name: user_id
+        description: User for identified sessions, null for anonymous sessions.
+      - name: traffic_source
+        description: Traffic source of the session.
+      - name: browser
+        description: Browser used in the session.
+      - name: session_started_at
+        description: Timestamp of the first event in the session.
+      - name: event_count
+        description: Number of events in the session.
+      - name: product_id
+        description: The one product viewed in the session.
+      - name: distinct_products_viewed
+        description: Count of distinct products viewed. Tested to be exactly 1.
+      - name: has_cancel_event
+        description: True when the session contains a cancel event.
+      - name: reached_product_view
+        description: True when the session has a product event.
+      - name: reached_cart
+        description: True when a cart event follows the first product view. Null if there is no cart event.
+      - name: reached_purchase
+        description: True when a purchase event follows the first cart event. Null if there is no purchase event.

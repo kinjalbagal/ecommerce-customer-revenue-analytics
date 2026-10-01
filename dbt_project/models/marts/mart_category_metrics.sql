@@ -32,7 +32,7 @@ first_order_categories as (
     where orders.customer_order_number = 1
 ),
 
-repeat_behaviour as (
+repeat_behavior as (
     select
         first_order_categories.department,
         first_order_categories.category,
@@ -50,13 +50,13 @@ select
     safe_divide(category_totals.units_returned, category_totals.units_ordered) as return_rate,
     safe_divide(category_totals.revenue, category_totals.units_sold) as average_unit_revenue,
     safe_divide(category_totals.gross_margin, category_totals.revenue) as gross_margin_rate,
-    repeat_behaviour.first_order_customers,
-    repeat_behaviour.first_order_customers_who_repeated,
+    repeat_behavior.first_order_customers,
+    repeat_behavior.first_order_customers_who_repeated,
     safe_divide(
-        repeat_behaviour.first_order_customers_who_repeated,
-        repeat_behaviour.first_order_customers
+        repeat_behavior.first_order_customers_who_repeated,
+        repeat_behavior.first_order_customers
     ) as first_order_repeat_rate
 from category_totals
-left join repeat_behaviour
-    on category_totals.department = repeat_behaviour.department
-    and category_totals.category = repeat_behaviour.category
+left join repeat_behavior
+    on category_totals.department = repeat_behavior.department
+    and category_totals.category = repeat_behavior.category

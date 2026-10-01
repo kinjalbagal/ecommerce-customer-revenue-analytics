@@ -65,6 +65,21 @@ models:
       - name: session_id
         description: Primary key.
         data_tests: [unique, not_null]
+      - name: user_id
+        description: User for identified sessions. Null for anonymous sessions, which the relationship test skips.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: user_id
+      - name: product_id
+        description: The one product viewed in the session.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_products')
+                field: product_id
       - name: is_identified_user
         description: True when the session carries a user_id. In this dataset only purchasing sessions do.
       - name: reached_product_view
@@ -157,7 +172,7 @@ models:
 
   - name: mart_category_metrics
     description: >
-      Category performance including cancellation, return and repeat behaviour. Grain is one row per
+      Category performance including cancellation, return and repeat behavior. Grain is one row per
       department and category.
     columns:
       - name: category
@@ -167,30 +182,81 @@ models:
 
   - name: mart_funnel_summary
     description: >
-      Session funnel counts. Grain is one row per month, traffic source, browser, department and category.
+      Session funnel counts. Grain is one row per month, traffic source, browser, department and
+      category; uniqueness is checked by assert_mart_grains_are_unique. Every measure is additive,
+      so rates are computed as ratios of sums. Upstream: fct_sessions.
     columns:
-      - name: sessions
+      - name: session_month
+        description: First day of the month in which the session started.
         data_tests: [not_null]
+      - name: traffic_source
+        description: Traffic source of the session (Email, Adwords, YouTube, Facebook, Organic).
+        data_tests: [not_null]
+      - name: browser
+        description: Browser used in the session.
+        data_tests: [not_null]
+      - name: department
+        description: Department of the product viewed.
+        data_tests: [not_null]
+      - name: category
+        description: Category of the product viewed.
+        data_tests: [not_null]
+      - name: sessions
+        description: Number of sessions. Denominator for overall conversion.
+        data_tests: [not_null]
+      - name: product_view_sessions
+        description: Sessions containing a product view. Equal to sessions in this dataset.
+      - name: cart_sessions
+        description: Sessions with a cart event after a product view.
+      - name: purchase_sessions
+        description: Sessions with a purchase event after a cart event. One purchase session corresponds to one order item.
+      - name: cancel_sessions
+        description: Sessions containing a cancel event, which marks an abandoned cart.
 
   - name: mart_reorder_backtest
     description: >
-      Observed 12-month reorder behaviour of customers as they stood 365 days before the end of the
-      data. Grain is one row per recency band, prior order group and prior spend tier. Used to set
-      the baseline for the opportunity scenarios.
+      Observed 12-month reorder behavior of customers as they stood at a snapshot date. Two
+      outcome windows are produced: 'original' ends on the last order date, and
+      'excluding_final_month' ends on the last day of the previous month, to remove the final-month
+      spike in order volume. Grain is one row per backtest window, recency band, prior order group
+      and prior spend tier; uniqueness is checked by assert_mart_grains_are_unique.
     columns:
+      - name: backtest_window
+        description: Which outcome window the row belongs to.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['original', 'excluding_final_month']
+      - name: snapshot_date
+        description: Date at which customers are described. 365 days before outcome_end_date.
+      - name: outcome_end_date
+        description: Last date on which a reorder is counted.
       - name: recency_band
+        description: Days from the customer's last valid order to the snapshot date, banded.
         data_tests: [not_null]
+      - name: prior_order_group
+        description: Whether the customer had one or several valid orders by the snapshot date.
+      - name: prior_spend_tier
+        description: Top 40% or bottom 60% of customers by revenue up to the snapshot date.
+      - name: customers
+        description: Customers with at least one valid order by the snapshot date.
       - name: customers_who_reordered
-        description: Customers placing at least one valid order in the 365 days after the snapshot date.
+        description: Customers placing at least one valid order in the outcome window.
+      - name: orders_next_12m
+        description: Valid orders placed by those customers in the outcome window.
       - name: revenue_next_12m
-        description: Net revenue from those customers in the 365 days after the snapshot date.
+        description: Net revenue from those orders.
 
   - name: mart_opportunity_scenarios
     description: >
-      Scenario model for a second-purchase programme aimed at one-time buyers. Grain is one row per
-      scenario and recency band. estimated_incremental_revenue is an estimate built on assumptions,
-      not realised revenue.
+      Scenario model for a second-purchase program aimed at one-time buyers. Grain is one row per
+      backtest window, scenario and recency band. estimated_incremental_revenue is an estimate built
+      on assumptions, not realized revenue.
     columns:
+      - name: backtest_window
+        description: Backtest window that supplied the baseline rate and expected order value.
+        data_tests: [not_null]
       - name: scenario
         data_tests:
           - not_null

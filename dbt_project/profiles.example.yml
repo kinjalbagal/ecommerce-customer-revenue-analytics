@@ -8,7 +8,7 @@ thelook_analytics:
       type: bigquery
       method: oauth
       project: "{{ env_var('GCP_PROJECT_ID') }}"
-      dataset: thelook_analytics
+      dataset: "{{ env_var('BQ_DATASET', 'thelook_analytics') }}"
       location: US
       threads: 4
       priority: interactive
