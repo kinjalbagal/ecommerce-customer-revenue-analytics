@@ -33,7 +33,7 @@ def save(fig: go.Figure, name: str, title: str, height: int = 520) -> None:
         legend=dict(orientation="h", yanchor="bottom", y=1.0, xanchor="right", x=1),
     )
     fig.write_image(PNG_DIR / f"{name}.png", scale=2)
-    fig.write_html(HTML_DIR / f"{name}.html", include_plotlyjs="cdn")
+    fig.write_html(HTML_DIR / f"{name}.html", include_plotlyjs="cdn", div_id=name)
     print(f"wrote {name}")
 
 

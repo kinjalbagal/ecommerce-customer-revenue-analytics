@@ -21,18 +21,15 @@ union all
 select 'users.city is null', countif(city is null), count(*)
 from `bigquery-public-data.thelook_ecommerce.users`
 union all
-select 'users.created_at in the future', countif(created_at > current_timestamp()), count(*)
-from `bigquery-public-data.thelook_ecommerce.users`
-union all
-select 'orders.created_at in the future', countif(created_at > current_timestamp()), count(*)
-from `bigquery-public-data.thelook_ecommerce.orders`
-union all
 select 'orders.created_at before users.created_at', countif(o.created_at < u.created_at), count(*)
 from `bigquery-public-data.thelook_ecommerce.orders` o
 join `bigquery-public-data.thelook_ecommerce.users` u on o.user_id = u.id
 union all
-select 'events.created_at in the future', countif(created_at > current_timestamp()), count(*)
+select 'events.created_at after latest order', countif(created_at > (select max(created_at) from `bigquery-public-data.thelook_ecommerce.orders`)), count(*)
 from `bigquery-public-data.thelook_ecommerce.events`
+union all
+select 'order_items.created_at after latest order', countif(created_at > (select max(created_at) from `bigquery-public-data.thelook_ecommerce.orders`)), count(*)
+from `bigquery-public-data.thelook_ecommerce.order_items`
 union all
 select 'users with zero orders', countif(o.user_id is null), count(*)
 from `bigquery-public-data.thelook_ecommerce.users` u

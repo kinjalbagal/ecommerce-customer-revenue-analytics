@@ -1,6 +1,12 @@
--- Distribution of days between consecutive valid orders, and how quickly second orders arrive.
+-- Distribution of days between consecutive valid orders, and how quickly repeat orders arrive.
 with gaps as (
-    select customer_order_number, days_since_previous_order
+    select
+        days_since_previous_order,
+        -- Exact percentiles; approx_quantiles can differ between runs.
+        percentile_cont(days_since_previous_order, 0.25) over () as p25_days,
+        percentile_cont(days_since_previous_order, 0.5) over () as median_days,
+        percentile_cont(days_since_previous_order, 0.75) over () as p75_days,
+        percentile_cont(days_since_previous_order, 0.9) over () as p90_days
     from fct_orders
     where customer_order_number > 1
 )
@@ -8,10 +14,10 @@ with gaps as (
 select
     count(*) as repeat_orders,
     round(avg(days_since_previous_order), 1) as mean_days,
-    approx_quantiles(days_since_previous_order, 100)[offset(25)] as p25_days,
-    approx_quantiles(days_since_previous_order, 100)[offset(50)] as median_days,
-    approx_quantiles(days_since_previous_order, 100)[offset(75)] as p75_days,
-    approx_quantiles(days_since_previous_order, 100)[offset(90)] as p90_days,
+    any_value(p25_days) as p25_days,
+    any_value(median_days) as median_days,
+    any_value(p75_days) as p75_days,
+    any_value(p90_days) as p90_days,
     round(countif(days_since_previous_order <= 30) / count(*), 4) as share_within_30_days,
     round(countif(days_since_previous_order <= 90) / count(*), 4) as share_within_90_days,
     round(countif(days_since_previous_order <= 180) / count(*), 4) as share_within_180_days,

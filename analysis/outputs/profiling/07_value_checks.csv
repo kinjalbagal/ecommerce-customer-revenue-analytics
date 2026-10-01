@@ -1,13 +1,12 @@
 check_name,failing_rows,total_rows
-events.created_at in the future,1220,2419854
+events.created_at after latest order,1843,2419854
+order_items.created_at after latest order,1843,180771
 order_items.sale_price != products.retail_price,0,180771
 order_items.sale_price <= 0 or null,0,180771
 orders.created_at before users.created_at,0,124814
-orders.created_at in the future,0,124814
 products.brand is null,24,29120
 products.cost >= retail_price,0,29120
 products.name is null,2,29120
 users with zero orders,19966,100000
 users.age outside 12-70,0,100000
 users.city is null,0,100000
-users.created_at in the future,0,100000
