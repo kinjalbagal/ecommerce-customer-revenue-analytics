@@ -1,5 +1,7 @@
--- Eligible one-time buyers, observed baseline and base-scenario estimate by recency band.
+-- Eligible one-time buyers, observed baseline and base-scenario estimate by recency band,
+-- for both backtest windows.
 select
+    backtest_window,
     recency_band,
     eligible_customers,
     round(baseline_reorder_rate, 4) as baseline_reorder_rate,
@@ -8,4 +10,4 @@ select
     round(estimated_incremental_revenue, 2) as estimated_incremental_revenue
 from mart_opportunity_scenarios
 where scenario = 'Base'
-order by recency_band_order;
+order by backtest_window, recency_band_order;

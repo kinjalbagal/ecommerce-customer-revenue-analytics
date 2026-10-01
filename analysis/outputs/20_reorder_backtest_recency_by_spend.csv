@@ -1,11 +1,21 @@
-recency_band,prior_spend_tier,customers,avg_prior_revenue,reorder_rate_12m,next_order_value
-0-90 days,Top 40% by prior spend,2484,215.66,0.2379,91.74
-0-90 days,Bottom 60% by prior spend,2984,53.86,0.2446,82.17
-91-180 days,Top 40% by prior spend,1891,221.17,0.2147,84.04
-91-180 days,Bottom 60% by prior spend,2667,53.9,0.2205,81.74
-181-365 days,Top 40% by prior spend,3213,215.94,0.1911,85.2
-181-365 days,Bottom 60% by prior spend,4328,54.02,0.1802,90.29
-366-730 days,Top 40% by prior spend,4144,211.22,0.1602,84.53
-366-730 days,Bottom 60% by prior spend,5975,54.7,0.1479,83.4
-Over 730 days,Top 40% by prior spend,5252,211.59,0.1201,89.96
-Over 730 days,Bottom 60% by prior spend,9522,53.75,0.1101,87.41
+backtest_window,recency_band,prior_spend_tier,customers,avg_prior_revenue,reorder_rate_12m,next_order_value
+excluding_final_month,0-90 days,Top 40% by prior spend,2302,216.14,0.2337,87.02
+excluding_final_month,0-90 days,Bottom 60% by prior spend,2938,45.36,0.2294,84.19
+excluding_final_month,91-180 days,Top 40% by prior spend,1930,220.42,0.2098,81.86
+excluding_final_month,91-180 days,Bottom 60% by prior spend,2540,45.82,0.2224,84.14
+excluding_final_month,181-365 days,Top 40% by prior spend,3174,217.81,0.1881,88.01
+excluding_final_month,181-365 days,Bottom 60% by prior spend,4211,45.07,0.1812,87.69
+excluding_final_month,366-730 days,Top 40% by prior spend,3973,206.99,0.1588,83.09
+excluding_final_month,366-730 days,Bottom 60% by prior spend,5857,44.99,0.1467,87.14
+excluding_final_month,Over 730 days,Top 40% by prior spend,5097,202.16,0.1185,90.64
+excluding_final_month,Over 730 days,Bottom 60% by prior spend,9170,43.86,0.1111,87.69
+original,0-90 days,Top 40% by prior spend,2484,218.68,0.2379,91.74
+original,0-90 days,Bottom 60% by prior spend,2984,45.7,0.2446,82.17
+original,91-180 days,Top 40% by prior spend,1891,222.19,0.2147,84.04
+original,91-180 days,Bottom 60% by prior spend,2667,45.56,0.2205,81.74
+original,181-365 days,Top 40% by prior spend,3213,217.33,0.1911,85.2
+original,181-365 days,Bottom 60% by prior spend,4328,45.52,0.1802,90.29
+original,366-730 days,Top 40% by prior spend,4144,208.69,0.1602,84.53
+original,366-730 days,Bottom 60% by prior spend,5975,45.24,0.1479,83.4
+original,Over 730 days,Top 40% by prior spend,5252,203.55,0.1201,89.96
+original,Over 730 days,Bottom 60% by prior spend,9522,44.06,0.1101,87.41

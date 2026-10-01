@@ -1,4 +1,4 @@
--- Category revenue, pricing, margin, leakage and repeat behaviour, with department rolled together.
+-- Category revenue, pricing, margin, leakage and repeat behavior, with department rolled together.
 select
     category,
     round(sum(revenue), 2) as revenue,

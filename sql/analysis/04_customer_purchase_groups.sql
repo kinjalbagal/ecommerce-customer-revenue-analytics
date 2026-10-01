@@ -1,4 +1,4 @@
--- Registered users by purchase behaviour, and the revenue each group accounts for.
+-- Registered users by purchase behavior, and the revenue each group accounts for.
 select
     purchase_group,
     count(*) as users,

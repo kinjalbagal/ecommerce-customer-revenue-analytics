@@ -1,5 +1,7 @@
--- Estimated incremental revenue per scenario. Estimates, not realised revenue.
+-- Estimated incremental revenue per scenario, for both backtest windows.
+-- Estimates, not realized revenue.
 select
+    backtest_window,
     scenario,
     relative_lift_in_reorder_rate,
     sum(eligible_customers) as eligible_customers,
@@ -9,5 +11,5 @@ select
     round(sum(estimated_incremental_revenue), 2) as estimated_incremental_revenue,
     round(sum(if(recency_band_order <= 365, estimated_incremental_revenue, 0)), 2) as estimated_incremental_revenue_last_365_days_only
 from mart_opportunity_scenarios
-group by 1, 2
-order by relative_lift_in_reorder_rate;
+group by 1, 2, 3
+order by backtest_window, relative_lift_in_reorder_rate;

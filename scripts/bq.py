@@ -6,7 +6,7 @@ from pathlib import Path
 from google.cloud import bigquery
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-DATASET = "thelook_analytics"
+DATASET = os.environ.get("BQ_DATASET", "thelook_analytics")
 
 # The REST fallback is fast enough for these small result sets.
 warnings.filterwarnings("ignore", message="BigQuery Storage module not found")

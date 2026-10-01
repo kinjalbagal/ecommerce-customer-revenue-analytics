@@ -1,6 +1,11 @@
-recency_band,eligible_customers,baseline_reorder_rate,expected_order_value,estimated_incremental_customers,estimated_incremental_revenue
-0-90 days,7379,0.2363,85.78,174.3,14954.33
-91-180 days,4363,0.2117,85.78,92.4,7922.32
-181-365 days,6894,0.1795,85.78,123.8,10617.29
-366-730 days,9627,0.1427,85.78,137.4,11787.83
-Over 730 days,17834,0.1072,85.78,191.2,16398.75
+backtest_window,recency_band,eligible_customers,baseline_reorder_rate,expected_order_value,estimated_incremental_customers,estimated_incremental_revenue
+excluding_final_month,0-90 days,7379,0.2236,86.34,165.0,14246.94
+excluding_final_month,91-180 days,4363,0.2112,86.34,92.1,7954.7
+excluding_final_month,181-365 days,6894,0.1781,86.34,122.8,10599.75
+excluding_final_month,366-730 days,9627,0.143,86.34,137.7,11888.38
+excluding_final_month,Over 730 days,17834,0.1075,86.34,191.7,16554.89
+original,0-90 days,7379,0.2363,85.78,174.3,14954.33
+original,91-180 days,4363,0.2117,85.78,92.4,7922.32
+original,181-365 days,6894,0.1795,85.78,123.8,10617.29
+original,366-730 days,9627,0.1427,85.78,137.4,11787.83
+original,Over 730 days,17834,0.1072,85.78,191.2,16398.75

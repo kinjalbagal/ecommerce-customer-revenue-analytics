@@ -1,6 +1,6 @@
-# Tableau Data Exports
+# Mart Exports
 
-CSV exports of the dbt marts, written by `scripts/export_tableau_data.py`. Snapshot of the source taken on 2026-09-30. No file contains raw events or personal fields. Float columns are rounded to four decimals.
+CSV exports of the dbt marts, written by `scripts/export_marts.py` and read by the Streamlit dashboard and the figure script. Snapshot of the source taken on 2026-09-30. No file contains raw events or personal fields. Float columns are rounded to six decimals.
 
 | File | Grain | Rows | Size |
 |---|---|---|---|
@@ -11,8 +11,8 @@ CSV exports of the dbt marts, written by `scripts/export_tableau_data.py`. Snaps
 | `mart_revenue_concentration.csv` | One row per customer percentile | 100 | < 0.1 MB |
 | `mart_funnel_summary.csv` | One row per session month, traffic source, browser, department and category | 69,611 | 4 MB |
 | `mart_category_metrics.csv` | One row per department and category | 36 | < 0.1 MB |
-| `mart_reorder_backtest.csv` | One row per recency band, prior order group and prior spend tier | 20 | < 0.1 MB |
-| `mart_opportunity_scenarios.csv` | One row per scenario and recency band | 15 | < 0.1 MB |
+| `mart_reorder_backtest.csv` | One row per backtest window, recency band, prior order group and prior spend tier | 40 | < 0.1 MB |
+| `mart_opportunity_scenarios.csv` | One row per backtest window, scenario and recency band | 30 | < 0.1 MB |
 
 Revenue everywhere means value from orders with status Complete, Shipped or Processing. See `analysis/kpi_dictionary.md`.
 
@@ -114,10 +114,12 @@ All columns are additive. Compute rates as ratios of sums.
 
 ### mart_reorder_backtest.csv
 
-Customers as they stood on 2025-09-30, followed for 365 days.
+Customers as they stood at a snapshot date, followed for 365 days. Two windows are included: `excluding_final_month` (snapshot 2025-08-31, used for the headline results) and `original` (snapshot 2025-09-30).
 
 | Column | Description |
 |---|---|
+| `backtest_window` | `excluding_final_month` or `original` |
+| `snapshot_date`, `outcome_end_date` | Start and end of the 365-day outcome window |
 | `recency_band`, `recency_band_order` | Days since last order at the snapshot, and a sort key |
 | `prior_order_group` | 1 order or 2+ orders before the snapshot |
 | `prior_spend_tier` | Top 40% or bottom 60% of customers by revenue before the snapshot |
@@ -128,10 +130,11 @@ Customers as they stood on 2025-09-30, followed for 365 days.
 
 ### mart_opportunity_scenarios.csv
 
-Estimates built on assumptions. Not realised revenue.
+Estimates built on assumptions. Not realized revenue.
 
 | Column | Description | Type |
 |---|---|---|
+| `backtest_window` | Backtest window that supplied the baseline; filter to one value before summing | |
 | `scenario` | Conservative, Base or Optimistic | |
 | `relative_lift_in_reorder_rate` | Assumed relative increase in the reorder rate | Assumption |
 | `recency_band`, `recency_band_order` | Days since the customer's only order, and a sort key | |

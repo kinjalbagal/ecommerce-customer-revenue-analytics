@@ -1,6 +1,6 @@
 """Build the project's Plotly figures from the mart exports and analysis outputs.
 
-Reads CSVs produced by scripts/export_tableau_data.py and scripts/run_sql.py; no
+Reads CSVs produced by scripts/export_marts.py and scripts/run_sql.py; no
 transformation logic is re-implemented here. Writes a PNG to images/ and an HTML
 file to figures/html/ for each figure.
 """
@@ -10,7 +10,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-MARTS = REPO_ROOT / "tableau" / "data"
+MARTS = REPO_ROOT / "data" / "marts"
 OUTPUTS = REPO_ROOT / "analysis" / "outputs"
 PNG_DIR = REPO_ROOT / "images"
 HTML_DIR = REPO_ROOT / "figures" / "html"
@@ -18,6 +18,14 @@ HTML_DIR = REPO_ROOT / "figures" / "html"
 BLUE = "#2F5D8A"
 LIGHT_BLUE = "#9DB8D2"
 ORANGE = "#D9822B"
+
+# The opportunity analysis uses the backtest window that leaves out the final-month
+# spike in orders; the original window is shown alongside it in the sensitivity figure.
+PRIMARY_WINDOW = "excluding_final_month"
+WINDOW_LABELS = {
+    "original": "Original window (ends 2026-09-30)",
+    "excluding_final_month": "Adjusted window (ends 2026-08-31)",
+}
 GREY = "#8C8C8C"
 LIGHT_GREY = "#D0D0D0"
 
@@ -191,12 +199,12 @@ def category_mix() -> None:
     categories = pd.read_csv(OUTPUTS / "17_category_performance.csv")
     top = categories.iloc[0]
     limit = max(categories["share_of_units"].max(), categories["share_of_revenue"].max()) * 1.1
-    labelled = categories[(categories["share_of_revenue"] - categories["share_of_units"]).abs() > 0.02]
+    labeled = categories[(categories["share_of_revenue"] - categories["share_of_units"]).abs() > 0.02]
     fig = go.Figure()
     fig.add_scatter(x=[0, limit], y=[0, limit], mode="lines", line=dict(color=LIGHT_GREY, dash="dash"), name="Revenue share equals unit share")
     fig.add_scatter(x=categories["share_of_units"], y=categories["share_of_revenue"], mode="markers", marker=dict(color=BLUE, size=10),
                     name="Category", text=categories["category"], hovertemplate="%{text}<br>Units %{x:.1%}<br>Revenue %{y:.1%}<extra></extra>")
-    fig.add_scatter(x=labelled["share_of_units"], y=labelled["share_of_revenue"], mode="text", text=labelled["category"],
+    fig.add_scatter(x=labeled["share_of_units"], y=labeled["share_of_revenue"], mode="text", text=labeled["category"],
                     textposition="top center", showlegend=False, textfont=dict(size=11))
     fig.update_xaxes(title_text="Share of units sold", tickformat=".0%", range=[0, limit])
     fig.update_yaxes(title_text="Share of revenue", tickformat=".0%", range=[0, limit])
@@ -207,16 +215,17 @@ def category_mix() -> None:
 
 def reorder_backtest() -> None:
     backtest = pd.read_csv(OUTPUTS / "20_reorder_backtest_recency_by_spend.csv")
+    backtest = backtest[backtest["backtest_window"] == PRIMARY_WINDOW]
     bands = list(dict.fromkeys(backtest["recency_band"]))
     pooled = pd.read_csv(OUTPUTS / "19_reorder_backtest.csv")
-    recency = pooled[pooled["dimension"] == "Recency"]
+    recency = pooled[(pooled["dimension"] == "Recency") & (pooled["backtest_window"] == PRIMARY_WINDOW)]
     fig = go.Figure()
     for tier, color in [("Top 40% by prior spend", BLUE), ("Bottom 60% by prior spend", LIGHT_BLUE)]:
         subset = backtest[backtest["prior_spend_tier"] == tier].set_index("recency_band").loc[bands]
         fig.add_bar(x=bands, y=subset["reorder_rate_12m"], name=tier, marker_color=color,
                     text=[f"{v:.1%}" for v in subset["reorder_rate_12m"]], textposition="outside")
     fig.update_layout(barmode="group")
-    fig.update_xaxes(title_text="Days since last order at the snapshot date")
+    fig.update_xaxes(title_text="Days since last order at the snapshot date (2025-08-31)")
     fig.update_yaxes(title_text="Share reordering in the next 12 months", tickformat=".0%", range=[0, 0.3])
     save(fig, "11_reorder_rate_by_recency_and_spend",
          f"Recency predicts a reorder ({recency['reorder_rate_12m'].iloc[0]:.0%} falling to {recency['reorder_rate_12m'].iloc[-1]:.0%}); past spend does not")
@@ -224,6 +233,7 @@ def reorder_backtest() -> None:
 
 def opportunity_scenarios() -> None:
     scenarios = pd.read_csv(OUTPUTS / "21_opportunity_scenarios.csv")
+    scenarios = scenarios[scenarios["backtest_window"] == PRIMARY_WINDOW]
     fig = go.Figure(go.Bar(
         x=scenarios["scenario"], y=scenarios["estimated_incremental_revenue"], marker_color=[LIGHT_BLUE, BLUE, ORANGE],
         text=[f"${v:,.0f}<br>(+{lift:.0%} relative lift)" for v, lift in zip(scenarios["estimated_incremental_revenue"], scenarios["relative_lift_in_reorder_rate"])],
@@ -234,7 +244,26 @@ def opportunity_scenarios() -> None:
     fig.update_yaxes(title_text="Estimated incremental revenue over 12 months (USD)", tickprefix="$", tickformat=",.0f",
                      range=[0, scenarios["estimated_incremental_revenue"].max() * 1.25])
     save(fig, "12_opportunity_scenarios",
-         f"Estimated opportunity from lifting the reorder rate of {eligible:,} one-time buyers (not realised revenue)")
+         f"Estimated opportunity from lifting the reorder rate of {eligible:,} one-time buyers (not realized revenue)")
+
+
+def final_month_sensitivity() -> None:
+    pooled = pd.read_csv(OUTPUTS / "19_reorder_backtest.csv")
+    recency = pooled[pooled["dimension"] == "Recency"]
+    largest_gap = (
+        recency.pivot(index="segment", columns="backtest_window", values="reorder_rate_12m")
+        .pipe(lambda rates: (rates["original"] - rates["excluding_final_month"]).abs().max())
+    )
+    fig = go.Figure()
+    for window, color in [("original", LIGHT_BLUE), ("excluding_final_month", BLUE)]:
+        subset = recency[recency["backtest_window"] == window].sort_values("sort_order")
+        fig.add_bar(x=subset["segment"], y=subset["reorder_rate_12m"], name=WINDOW_LABELS[window], marker_color=color,
+                    text=[f"{v:.1%}" for v in subset["reorder_rate_12m"]], textposition="outside")
+    fig.update_layout(barmode="group")
+    fig.update_xaxes(title_text="Days since last order at the snapshot date")
+    fig.update_yaxes(title_text="Share reordering in the next 12 months", tickformat=".0%", range=[0, 0.3])
+    save(fig, "13_final_month_sensitivity",
+         f"Leaving September 2026 out of the outcome window moves reorder rates by at most {largest_gap * 100:.1f} points")
 
 
 def main() -> None:
@@ -252,6 +281,7 @@ def main() -> None:
     category_mix()
     reorder_backtest()
     opportunity_scenarios()
+    final_month_sensitivity()
 
 
 if __name__ == "__main__":
