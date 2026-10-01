@@ -1,0 +1,6 @@
+recency_band,eligible_customers,baseline_reorder_rate,expected_order_value,estimated_incremental_customers,estimated_incremental_revenue
+0-90 days,7379,0.2363,85.78,174.3,14954.33
+91-180 days,4363,0.2117,85.78,92.4,7922.32
+181-365 days,6894,0.1795,85.78,123.8,10617.29
+366-730 days,9627,0.1427,85.78,137.4,11787.83
+Over 730 days,17834,0.1072,85.78,191.2,16398.75

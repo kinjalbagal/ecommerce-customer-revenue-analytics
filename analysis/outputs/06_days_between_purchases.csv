@@ -1,0 +1,2 @@
+repeat_orders,mean_days,p25_days,median_days,p75_days,p90_days,share_within_30_days,share_within_90_days,share_within_180_days,share_within_365_days
+27281,392.9,74,240,568,1005,0.1417,0.2837,0.4273,0.619

@@ -21,3 +21,11 @@ models:
     marts:
       +materialized: table
 
+
+seeds:
+  thelook_analytics:
+    scenario_assumptions:
+      +column_types:
+        scenario: string
+        relative_lift_in_reorder_rate: float64
+        rationale: string

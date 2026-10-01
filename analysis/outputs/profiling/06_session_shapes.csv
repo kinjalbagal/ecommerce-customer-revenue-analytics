@@ -1,0 +1,9 @@
+path_shape,sessions,pct_sessions,min_events,max_events,anonymous_sessions,multi_user_sessions,multi_source_sessions
+department > product,125592,18.45,2,2,125592,0,0
+department > product > cart,124920,18.35,3,3,124920,0,0
+product,124781,18.33,1,1,124781,0,0
+(product > cart)+ > cancel,124707,18.32,3,3,124707,0,0
+home > department > (product > cart)+ > purchase,87442,12.84,5,5,0,0,0
+department > (product > cart)+ > department > (product > cart)+ > purchase,49984,7.34,7,7,0,0,0
+department > (product > cart)+ > department > (product > cart)+ > department > (product > cart)+ > department > (product > cart)+ > purchase,24820,3.65,13,13,0,0,0
+department > (product > cart)+ > department > (product > cart)+ > department > (product > cart)+ > purchase,18525,2.72,10,10,0,0,0

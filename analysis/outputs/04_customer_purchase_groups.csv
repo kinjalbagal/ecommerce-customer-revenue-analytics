@@ -1,0 +1,4 @@
+purchase_group,users,share_of_users,revenue,share_of_revenue,average_order_value,revenue_per_user,users_who_never_ordered,users_with_only_cancelled_or_returned_orders
+No valid order,34031,0.3403,0.0,0.0,,0.0,19966,14065
+One-time,46097,0.461,3991063.98,0.496,86.58,86.58,0,0
+Repeat,19872,0.1987,4055403.63,0.504,86.01,204.08,0,0

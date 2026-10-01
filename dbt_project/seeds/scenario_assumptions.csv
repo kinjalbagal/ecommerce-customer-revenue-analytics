@@ -1,0 +1,4 @@
+scenario,relative_lift_in_reorder_rate,rationale
+Conservative,0.05,Second-purchase programme lifts the 12-month reorder rate of one-time buyers by 5% relative to the observed baseline
+Base,0.10,Second-purchase programme lifts the 12-month reorder rate of one-time buyers by 10% relative to the observed baseline
+Optimistic,0.20,Second-purchase programme lifts the 12-month reorder rate of one-time buyers by 20% relative to the observed baseline

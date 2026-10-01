@@ -1,0 +1,4 @@
+scenario,relative_lift_in_reorder_rate,eligible_customers,baseline_reorder_rate,expected_order_value,estimated_incremental_customers,estimated_incremental_revenue,estimated_incremental_revenue_last_365_days_only
+Conservative,0.05,46097,0.156,85.78,360.0,30840.26,16746.97
+Base,0.1,46097,0.156,85.78,719.0,61680.53,33493.94
+Optimistic,0.2,46097,0.156,85.78,1438.0,123361.05,66987.89

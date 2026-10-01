@@ -1,0 +1,13 @@
+version: 2
+
+seeds:
+  - name: scenario_assumptions
+    description: >
+      Assumptions for the revenue opportunity scenarios. These are chosen values, not observed
+      results. Edit this file and run dbt build to recalculate mart_opportunity_scenarios.
+    columns:
+      - name: scenario
+        data_tests: [unique, not_null]
+      - name: relative_lift_in_reorder_rate
+        description: Assumed relative increase in the 12-month reorder rate, e.g. 0.10 turns a 20% baseline into 22%.
+        data_tests: [not_null]

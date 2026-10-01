@@ -1,0 +1,6 @@
+status,orders,pct_orders,gross_item_value,num_of_item_mismatch,mixed_item_status_orders,item_status_differs_from_order,null_shipped_at,null_delivered_at,null_returned_at,shipped_before_created,delivered_before_shipped,returned_before_delivered
+Shipped,37201,29.81,3182903.27,0,0,0,0,37201,37201,0,0,0
+Complete,31148,24.96,2702567.83,0,0,0,0,0,31148,0,0,0
+Processing,24901,19.95,2160996.51,0,0,0,24901,24901,24901,0,0,0
+Cancelled,18969,15.2,1623793.53,0,0,0,18969,18969,18969,0,0,0
+Returned,12595,10.09,1067365.01,0,0,0,0,0,0,0,0,0

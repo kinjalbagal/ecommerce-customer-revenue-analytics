@@ -1,0 +1,7 @@
+event_type,events,sessions,events_without_user,avg_sequence_number,min_sequence_number,max_sequence_number
+product,842265,680771,500000,2.71,1,11
+department,592777,431283,250512,2.44,1,10
+cart,591892,430398,249627,4.23,2,12
+purchase,180771,180771,0,7.16,5,13
+cancel,124707,124707,124707,3.0,3,3
+home,87442,87442,0,1.0,1,1

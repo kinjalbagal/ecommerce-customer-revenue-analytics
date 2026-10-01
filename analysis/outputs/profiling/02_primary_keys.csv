@@ -1,0 +1,9 @@
+key_column,row_count,null_keys,duplicate_keys
+"events.(session_id, sequence_number)",2419854,0,0
+events.id,2419854,0,0
+order_items.id,180771,0,0
+order_items.inventory_item_id,180771,0,0
+orders.order_id,124814,0,0
+products.id,29120,0,0
+users.email,100000,0,16212
+users.id,100000,0,0

@@ -17,6 +17,10 @@ with session_events as (
         count(distinct product_id) as distinct_products_viewed
     from {{ ref('stg_events') }}
     group by session_id
+    -- Order items, and the purchase sessions generated from them, can be stamped a few
+    -- days after the latest order. Sessions running past that point are dropped whole
+    -- so that every model shares the same end date and no session is cut short.
+    having max(event_at) <= (select max(ordered_at) from {{ ref('stg_orders') }})
 )
 
 select

@@ -1,0 +1,13 @@
+dimension,segment,sessions,view_to_cart_rate,cart_to_purchase_rate,overall_conversion_rate,cart_sessions_with_cancel_event
+Browser,Chrome,67747,0.7633,0.6904,0.5269,0.1525
+Browser,Firefox,27167,0.7657,0.6931,0.5307,0.1551
+Browser,Safari,27137,0.7635,0.6903,0.527,0.1562
+Browser,IE,6865,0.7723,0.7077,0.5465,0.1405
+Browser,Other,6856,0.7723,0.7003,0.5408,0.1518
+Department,Women,68087,0.7663,0.6903,0.529,0.1557
+Department,Men,67685,0.7631,0.6943,0.5298,0.1506
+Traffic source,Email,60620,0.764,0.6927,0.5293,0.1526
+Traffic source,Adwords,41277,0.7642,0.6914,0.5284,0.154
+Traffic source,YouTube,13647,0.7715,0.6909,0.533,0.1521
+Traffic source,Facebook,13462,0.7649,0.6929,0.53,0.1568
+Traffic source,Organic,6766,0.7603,0.6954,0.5287,0.1472

@@ -82,7 +82,7 @@ models:
                 values: ['Men', 'Women']
 
   - name: stg_events
-    description: Web events up to the latest order timestamp. Grain is one row per event.
+    description: Web events. Grain is one row per event.
     columns:
       - name: event_id
         description: Primary key.

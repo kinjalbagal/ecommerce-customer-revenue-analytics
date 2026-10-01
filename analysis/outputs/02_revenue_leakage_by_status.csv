@@ -1,0 +1,11 @@
+period,status,counts_toward_revenue,orders,gross_order_value,share_of_orders,share_of_gross_order_value
+All time,Shipped,True,37201,3182903.27,0.2981,0.2964
+All time,Complete,True,31148,2702567.83,0.2496,0.2517
+All time,Processing,True,24901,2160996.51,0.1995,0.2013
+All time,Cancelled,False,18969,1623793.53,0.152,0.1512
+All time,Returned,False,12595,1067365.01,0.1009,0.0994
+Trailing 12 months,Shipped,True,15133,1313610.02,0.2985,0.2991
+Trailing 12 months,Complete,True,12761,1108981.74,0.2517,0.2525
+Trailing 12 months,Processing,True,10106,883622.35,0.1993,0.2012
+Trailing 12 months,Cancelled,False,7652,663035.23,0.1509,0.151
+Trailing 12 months,Returned,False,5044,422575.01,0.0995,0.0962

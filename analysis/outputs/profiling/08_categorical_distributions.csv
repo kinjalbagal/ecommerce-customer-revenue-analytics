@@ -1,0 +1,61 @@
+field,value,row_count
+events.browser,Chrome,1209760
+events.browser,Firefox,483777
+events.browser,Safari,483134
+events.browser,Other,121756
+events.browser,IE,121427
+events.traffic_source,Email,1084974
+events.traffic_source,Adwords,728462
+events.traffic_source,YouTube,243667
+events.traffic_source,Facebook,241316
+events.traffic_source,Organic,121435
+products.category,Intimates,2363
+products.category,Jeans,1999
+products.category,Tops & Tees,1868
+products.category,Fashion Hoodies & Sweatshirts,1866
+products.category,Swim,1798
+products.category,Sleep & Lounge,1771
+products.category,Shorts,1765
+products.category,Sweaters,1737
+products.category,Accessories,1559
+products.category,Active,1432
+products.category,Outerwear & Coats,1420
+products.category,Underwear,1088
+products.category,Pants,1041
+products.category,Dresses,955
+products.category,Socks,905
+products.category,Maternity,898
+products.category,Plus,758
+products.category,Suits & Sport Coats,739
+products.category,Socks & Hosiery,666
+products.category,Pants & Capris,613
+products.category,Leggings,564
+products.category,Blazers & Jackets,561
+products.category,Skirts,367
+products.category,Suits,188
+products.category,Jumpsuits & Rompers,162
+products.category,Clothing Sets,37
+products.department,Women,15989
+products.department,Men,13131
+users.country,China,34267
+users.country,United States,22547
+users.country,Brasil,14579
+users.country,South Korea,5264
+users.country,France,4624
+users.country,United Kingdom,4504
+users.country,Germany,4183
+users.country,Spain,3971
+users.country,Japan,2401
+users.country,Australia,2145
+users.country,Belgium,1250
+users.country,Poland,243
+users.country,Colombia,14
+users.country,Austria,5
+users.country,España,3
+users.gender,F,50129
+users.gender,M,49871
+users.traffic_source,Search,70106
+users.traffic_source,Organic,15022
+users.traffic_source,Facebook,5946
+users.traffic_source,Email,4971
+users.traffic_source,Display,3955

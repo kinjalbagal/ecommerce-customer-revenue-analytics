@@ -1,0 +1,7 @@
+relationship,child_rows,orphans
+events.user_id -> users.id (non-null user_id),1295008,0
+order_items.order_id -> orders.order_id,180771,0
+order_items.product_id -> products.id,180771,0
+order_items.user_id = orders.user_id,180771,0
+orders without order_items,124814,0
+orders.user_id -> users.id,124814,0

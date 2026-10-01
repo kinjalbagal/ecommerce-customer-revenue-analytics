@@ -8,3 +8,8 @@ select 'mart_category_metrics', department, category, count(*)
 from {{ ref('mart_category_metrics') }}
 group by 1, 2, 3
 having count(*) > 1
+union all
+select 'mart_opportunity_scenarios', scenario, recency_band, count(*)
+from {{ ref('mart_opportunity_scenarios') }}
+group by 1, 2, 3
+having count(*) > 1

@@ -1,0 +1,9 @@
+period,stage_order,stage,entrants,stage_conversion_rate,stage_drop_off_rate,sessions_lost,conversion_from_session
+All time,1,Session,678928,,,,1.0
+All time,2,Product view,678928,1.0,0.0,0,1.0
+All time,3,Add to cart,428555,0.6312,0.3688,250373,0.6312
+All time,4,Purchase,178928,0.4175,0.5825,249627,0.2635
+Trailing 12 months,1,Session,135772,,,,1.0
+Trailing 12 months,2,Product view,135772,1.0,0.0,0,1.0
+Trailing 12 months,3,Add to cart,103830,0.7647,0.2353,31942,0.7647
+Trailing 12 months,4,Purchase,71879,0.6923,0.3077,31951,0.5294

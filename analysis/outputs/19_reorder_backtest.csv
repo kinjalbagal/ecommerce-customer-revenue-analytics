@@ -1,0 +1,11 @@
+dimension,segment,sort_order,customers,reorder_rate_12m,next_order_value,revenue_per_customer_12m
+All customers,All customers,1,42460,0.1634,86.05,16.4
+Prior orders,1 order,1,32430,0.1523,85.78,15.39
+Prior orders,2+ orders,2,10030,0.1992,86.76,19.66
+Prior spend,Top 40% by prior spend,1,16984,0.1711,87.24,17.26
+Prior spend,Bottom 60% by prior spend,2,25476,0.1582,85.21,15.82
+Recency,0-90 days,0,5468,0.2416,86.3,26.18
+Recency,91-180 days,91,4558,0.2181,82.67,21.86
+Recency,181-365 days,181,7541,0.1849,88.07,19.06
+Recency,366-730 days,366,10119,0.153,83.88,14.65
+Recency,Over 730 days,731,14774,0.1136,88.36,10.93

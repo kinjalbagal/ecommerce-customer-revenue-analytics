@@ -1,0 +1,5 @@
+measure,min_value,p50,p90,p99,max_value
+item_sale_price_usd,0.02,39.99,128.0,300.0,999.0
+orders_per_customer,1.0,1.0,3.0,4.0,4.0
+order_value_usd,0.02,55.0,190.99,424.5,1264.23
+items_per_order,1.0,1.0,2.0,4.0,4.0

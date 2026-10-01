@@ -171,3 +171,50 @@ models:
     columns:
       - name: sessions
         data_tests: [not_null]
+
+  - name: mart_reorder_backtest
+    description: >
+      Observed 12-month reorder behaviour of customers as they stood 365 days before the end of the
+      data. Grain is one row per recency band, prior order group and prior spend tier. Used to set
+      the baseline for the opportunity scenarios.
+    columns:
+      - name: recency_band
+        data_tests: [not_null]
+      - name: customers_who_reordered
+        description: Customers placing at least one valid order in the 365 days after the snapshot date.
+      - name: revenue_next_12m
+        description: Net revenue from those customers in the 365 days after the snapshot date.
+
+  - name: mart_opportunity_scenarios
+    description: >
+      Scenario model for a second-purchase programme aimed at one-time buyers. Grain is one row per
+      scenario and recency band. estimated_incremental_revenue is an estimate built on assumptions,
+      not realised revenue.
+    columns:
+      - name: scenario
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('scenario_assumptions')
+                field: scenario
+      - name: eligible_customers
+        description: Observed. Customers with exactly one valid order, by days since that order.
+      - name: baseline_reorder_rate
+        description: Observed. 12-month reorder rate of one-order customers in the same recency band in the backtest.
+      - name: expected_order_value
+        description: Observed. Average value of orders placed by one-order customers in the backtest window.
+      - name: estimated_incremental_revenue
+        description: Estimate. eligible_customers x baseline_reorder_rate x relative lift x expected_order_value.
+        data_tests: [not_null]
+
+  - name: mart_revenue_concentration
+    description: >
+      Revenue concentration curve. Grain is one row per customer percentile, ranked from the
+      highest lifetime revenue down. Upstream: dim_customers.
+    columns:
+      - name: customer_percentile
+        description: Primary key. 1 is the top 1% of customers by lifetime revenue.
+        data_tests: [unique, not_null]
+      - name: cumulative_share_of_revenue
+        description: Share of all revenue contributed by this percentile and every higher-spending one.

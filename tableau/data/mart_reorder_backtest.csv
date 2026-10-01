@@ -1,0 +1,21 @@
+recency_band,recency_band_order,prior_order_group,prior_spend_tier,customers,customers_who_reordered,orders_next_12m,revenue_next_12m,avg_prior_revenue
+0-90 days,0,1 order,Bottom 60% by prior spend,2562,604,791,65316.1601,42.4767
+0-90 days,0,1 order,Top 40% by prior spend,1095,260,336,32365.0901,190.0902
+0-90 days,0,2+ orders,Bottom 60% by prior spend,422,126,152,12169.2,65.2459
+0-90 days,0,2+ orders,Top 40% by prior spend,1389,331,380,33320.53,241.2212
+91-180 days,91,1 order,Bottom 60% by prior spend,2272,492,601,49268.52,42.0444
+91-180 days,91,1 order,Top 40% by prior spend,912,182,227,18170.65,192.5699
+91-180 days,91,2+ orders,Bottom 60% by prior spend,395,96,117,9422.74,65.7649
+91-180 days,91,2+ orders,Top 40% by prior spend,979,224,260,22756.41,249.7766
+181-365 days,181,1 order,Bottom 60% by prior spend,3773,668,794,70960.0601,42.5893
+181-365 days,181,1 order,Top 40% by prior spend,1535,285,330,27649.08,184.6984
+181-365 days,181,2+ orders,Bottom 60% by prior spend,555,112,124,11929.2,65.459
+181-365 days,181,2+ orders,Top 40% by prior spend,1678,329,384,33184.0901,247.1737
+366-730 days,366,1 order,Bottom 60% by prior spend,5376,773,887,74055.7101,42.8654
+366-730 days,366,1 order,Top 40% by prior spend,2302,323,376,33577.5701,188.3955
+366-730 days,366,2+ orders,Bottom 60% by prior spend,599,111,121,10009.37,66.5279
+366-730 days,366,2+ orders,Top 40% by prior spend,1842,341,383,30577.0701,234.0475
+Over 730 days,731,1 order,Bottom 60% by prior spend,8927,961,1053,90175.5901,42.6803
+Over 730 days,731,1 order,Top 40% by prior spend,3676,390,422,37437.52,191.4996
+Over 730 days,731,2+ orders,Bottom 60% by prior spend,595,87,90,9735.08,64.8277
+Over 730 days,731,2+ orders,Top 40% by prior spend,1576,241,262,24094.0301,231.672

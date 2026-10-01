@@ -11,6 +11,3 @@ select
     browser,
     safe_cast(regexp_extract(uri, r'^/product/(\d+)') as int64) as product_id
 from {{ source('thelook', 'events') }}
--- A small number of events are stamped after the latest order; they are excluded
--- so that every model shares the same end date.
-where created_at <= (select max(created_at) from {{ source('thelook', 'orders') }})
