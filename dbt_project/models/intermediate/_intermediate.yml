@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: int_order_items_enriched
+    description: >
+      Order items with order status, order timestamp and product attributes. Applies the revenue
+      rule (is_revenue_status macro) so downstream models never re-implement it. Grain is one row per order item.
+    columns:
+      - name: order_item_id
+        data_tests: [unique, not_null]
+      - name: net_revenue
+        description: sale_price for items in revenue-counting orders, otherwise 0.
+
+  - name: int_orders_valued
+    description: Order-level totals rolled up from items. Grain is one row per order.
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+
+  - name: int_session_funnel
+    description: >
+      Session-level funnel flags derived from ordered events. Grain is one row per session.
+    columns:
+      - name: session_id
+        data_tests: [unique, not_null]

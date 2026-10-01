@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: thelook
+    description: Google's public TheLook eCommerce dataset (synthetic, regenerated daily).
+    database: bigquery-public-data
+    schema: thelook_ecommerce
+    tables:
+      - name: users
+        description: One row per registered user.
+      - name: orders
+        description: One row per order.
+      - name: order_items
+        description: One row per item (unit) within an order.
+      - name: products
+        description: One row per product in the catalog.
+      - name: events
+        description: One row per web event. Sessions are identified by session_id.

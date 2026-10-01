@@ -1,0 +1,104 @@
+version: 2
+
+models:
+  - name: stg_users
+    description: Registered users with analysis-relevant attributes only. Grain is one row per user.
+    columns:
+      - name: user_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: acquisition_source
+        description: Channel through which the user signed up. Not the same field as the session traffic source in events.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Search', 'Organic', 'Facebook', 'Email', 'Display']
+      - name: country
+        data_tests: [not_null]
+      - name: signed_up_at
+        data_tests: [not_null]
+
+  - name: stg_orders
+    description: Orders as recorded in the source. Grain is one row per order.
+    columns:
+      - name: order_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: user_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_users')
+                field: user_id
+      - name: status
+        description: Current order status. Drives the revenue definition.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Complete', 'Shipped', 'Processing', 'Cancelled', 'Returned']
+      - name: ordered_at
+        description: Order creation timestamp. Used as the order date everywhere.
+        data_tests: [not_null]
+
+  - name: stg_order_items
+    description: Order line items. Each row is a single unit. Grain is one row per order item.
+    columns:
+      - name: order_item_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: order_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+      - name: product_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_products')
+                field: product_id
+      - name: sale_price
+        description: Price paid for the unit in USD.
+        data_tests: [not_null]
+
+  - name: stg_products
+    description: Product catalog. Grain is one row per product.
+    columns:
+      - name: product_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: category
+        data_tests: [not_null]
+      - name: department
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Men', 'Women']
+
+  - name: stg_events
+    description: Web events up to the latest order timestamp. Grain is one row per event.
+    columns:
+      - name: event_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: session_id
+        data_tests: [not_null]
+      - name: event_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['home', 'department', 'product', 'cart', 'purchase', 'cancel']
+      - name: traffic_source
+        description: Traffic source of the session.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Email', 'Adwords', 'YouTube', 'Facebook', 'Organic']
+      - name: product_id
+        description: Product viewed, parsed from the URI of product events. Null for other event types.

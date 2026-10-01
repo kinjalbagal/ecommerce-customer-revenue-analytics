@@ -1,0 +1,173 @@
+version: 2
+
+models:
+  - name: fct_orders
+    description: >
+      Orders with value, revenue and the customer's purchase sequence. Grain is one row per order.
+      Upstream: int_orders_valued. Revenue is non-zero only for orders whose status counts toward
+      revenue (Complete, Shipped, Processing).
+    columns:
+      - name: order_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: user_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: user_id
+      - name: is_valid_order
+        description: True when the order status counts toward revenue.
+        data_tests: [not_null]
+      - name: gross_order_value
+        description: Sum of item sale prices regardless of status.
+      - name: net_revenue
+        description: Sum of item sale prices for valid orders, 0 for cancelled and returned orders.
+        data_tests: [not_null]
+      - name: customer_order_number
+        description: Position of the order among the customer's valid orders. Null for invalid orders.
+      - name: customer_type
+        description: New for a customer's first valid order, Returning for later ones.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['New', 'Returning']
+      - name: days_since_previous_order
+        description: Days since the customer's previous valid order. Null for first and invalid orders.
+
+  - name: fct_order_items
+    description: >
+      Order items with product attributes and revenue flags. Grain is one row per order item (one unit).
+      Upstream: int_order_items_enriched.
+    columns:
+      - name: order_item_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: order_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('fct_orders')
+                field: order_id
+      - name: product_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_products')
+                field: product_id
+
+  - name: fct_sessions
+    description: >
+      Web sessions with funnel stage flags. Grain is one row per session. Upstream: int_session_funnel,
+      stg_products. Every session views exactly one product, which gives the session its category.
+    columns:
+      - name: session_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: is_identified_user
+        description: True when the session carries a user_id. In this dataset only purchasing sessions do.
+      - name: reached_product_view
+        data_tests: [not_null]
+      - name: reached_cart
+        description: Session has a cart event after a product view.
+        data_tests: [not_null]
+      - name: reached_purchase
+        description: Session has a purchase event after a cart event.
+        data_tests: [not_null]
+      - name: category
+        data_tests: [not_null]
+
+  - name: dim_products
+    description: Product catalog attributes. Grain is one row per product.
+    columns:
+      - name: product_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+
+  - name: dim_customers
+    description: >
+      Registered users with lifetime purchase metrics. Grain is one row per user, including users
+      who never placed a valid order. Upstream: stg_users, fct_orders.
+    columns:
+      - name: user_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: valid_orders
+        description: Number of orders that count toward revenue.
+        data_tests: [not_null]
+      - name: lifetime_revenue
+        description: Customer Lifetime Revenue. Sum of net revenue across the customer's orders.
+        data_tests: [not_null]
+      - name: cohort_month
+        description: Month of the customer's first valid order. Null when there is none.
+      - name: days_since_last_order
+        description: Days between the last valid order and the latest order date in the dataset.
+      - name: purchase_group
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['No valid order', 'One-time', 'Repeat']
+
+  - name: mart_customer_rfm
+    description: >
+      RFM scores and segment for each customer with at least one valid order. Grain is one row per
+      customer. Upstream: dim_customers.
+    columns:
+      - name: user_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: recency_score
+        description: Quintile of days since last order. 5 is the most recent fifth of customers.
+      - name: frequency_score
+        description: Valid order count capped at 3.
+      - name: monetary_score
+        description: Quintile of lifetime revenue. 5 is the highest-spending fifth.
+      - name: rfm_segment
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - Champions
+                  - Loyal
+                  - High-Value At Risk
+                  - At Risk
+                  - New Customers
+                  - Potential Loyalists
+                  - Lapsed
+
+  - name: mart_cohort_retention
+    description: >
+      Cohort retention matrix in long form. Grain is one row per cohort month and months since first
+      order. Only month offsets that have been observed are present. Upstream: fct_orders, dim_customers.
+    columns:
+      - name: cohort_month
+        data_tests: [not_null]
+      - name: retention_rate
+        description: Share of the cohort placing at least one valid order in the month.
+        data_tests: [not_null]
+
+  - name: mart_monthly_revenue
+    description: Monthly revenue KPIs with a new versus returning split. Grain is one row per month.
+    columns:
+      - name: order_month
+        description: Primary key.
+        data_tests: [unique, not_null]
+
+  - name: mart_category_metrics
+    description: >
+      Category performance including cancellation, return and repeat behaviour. Grain is one row per
+      department and category.
+    columns:
+      - name: category
+        data_tests: [not_null]
+      - name: first_order_repeat_rate
+        description: Share of customers whose first valid order included the category who placed a second valid order.
+
+  - name: mart_funnel_summary
+    description: >
+      Session funnel counts. Grain is one row per month, traffic source, browser, department and category.
+    columns:
+      - name: sessions
+        data_tests: [not_null]

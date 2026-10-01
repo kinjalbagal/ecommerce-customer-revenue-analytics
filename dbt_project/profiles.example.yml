@@ -1,0 +1,15 @@
+# Copy to profiles.yml (git-ignored) and set GCP_PROJECT_ID.
+# Authentication uses application-default credentials:
+#   gcloud auth application-default login
+thelook_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth
+      project: "{{ env_var('GCP_PROJECT_ID') }}"
+      dataset: thelook_analytics
+      location: US
+      threads: 4
+      priority: interactive
+      maximum_bytes_billed: 5000000000

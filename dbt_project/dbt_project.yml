@@ -1,0 +1,23 @@
+name: thelook_analytics
+version: "1.0.0"
+config-version: 2
+profile: thelook_analytics
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+target-path: target
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  thelook_analytics:
+    # Staging is materialized as tables so that every downstream model reads one
+    # consistent copy of the source, which Google regenerates daily.
+    staging:
+      +materialized: table
+    intermediate:
+      +materialized: view
+    marts:
+      +materialized: table
+
